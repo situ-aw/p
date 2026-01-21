@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="賭けボーリング">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>賭けボーリング</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .settings {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .settings h2 {
+            margin-bottom: 15px;
+            color: #667eea;
+            font-size: 1.3em;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .teams-container {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .team {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .team.team-a {
+            border-top: 5px solid #4299e1;
+        }
+
+        .team.team-b {
+            border-top: 5px solid #ed8936;
+        }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .team-name {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .team-a .team-name {
+            color: #4299e1;
+        }
+
+        .team-b .team-name {
+            color: #ed8936;
+        }
+
+        .team-total {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .players {
+            margin-top: 15px;
+        }
+
+        .player {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid #e2e8f0;
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .player-name-input {
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            background: white;
+            min-width: 120px;
+            max-width: 200px;
+        }
+
+        .player-name-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .player-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .player-input input {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .add-player-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed #e2e8f0;
+        }
+
+        .add-player-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .add-player-input input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .add-player-input button {
+            padding: 10px 20px;
+            white-space: nowrap;
+        }
+
+        .result-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .score-comparison {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .team-score {
+            text-align: center;
+        }
+
+        .team-score-label {
+            font-size: 1em;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .team-a-label {
+            color: #4299e1;
+        }
+
+        .team-b-label {
+            color: #ed8936;
+        }
+
+        .team-score-value {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .winner-announcement {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .winner-team-a {
+            color: #4299e1;
+            background: #ebf8ff;
+        }
+
+        .winner-team-b {
+            color: #ed8936;
+            background: #fffaf0;
+        }
+
+        .winner-tie {
+            color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .point-difference {
+            font-size: 1.5em;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .reset-btn {
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 20px;
+            }
+
+            .settings, .team {
+                padding: 15px;
+            }
+
+            .player-input input {
+                width: 70px;
+            }
+
+            .team-score-value {
+                font-size: 2em;
+            }
+
+            .winner-announcement {
+                font-size: 1.5em;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎳 賭けボーリング</h1>
+
+        <div id="settingsPanel" class="settings">
+            <h2>⚙️ 設定</h2>
+            <div class="input-group">
+                <label>1ピンあたりのポイント</label>
+                <input type="number" id="pointPerPin" value="100" min="1">
+            </div>
+            <div class="input-group">
+                <label>チームA名</label>
+                <input type="text" id="teamAName" value="チームA">
+            </div>
+            <div class="input-group">
+                <label>チームB名</label>
+                <input type="text" id="teamBName" value="チームB">
+            </div>
+            <button class="btn btn-primary" onclick="startGame()">ゲーム開始</button>
+        </div>
+
+        <div id="gamePanel" class="hidden">
+            <div class="teams-container">
+                <div class="team team-a">
+                    <div class="team-header">
+                        <span class="team-name" id="displayTeamA">チームA</span>
+                        <span class="team-total">合計: <span id="teamATotal">0</span>ピン</span>
+                    </div>
+                    <div class="players" id="teamAPlayers"></div>
+                    <div class="add-player-section">
+                        <div class="add-player-input">
+                            <input type="text" id="newPlayerA" placeholder="プレイヤー名">
+                            <button class="btn btn-success" onclick="addPlayer('A')">追加</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team team-b">
+                    <div class="team-header">
+                        <span class="team-name" id="displayTeamB">チームB</span>
+                        <span class="team-total">合計: <span id="teamBTotal">0</span>ピン</span>
+                    </div>
+                    <div class="players" id="teamBPlayers"></div>
+                    <div class="add-player-section">
+                        <div class="add-player-input">
+                            <input type="text" id="newPlayerB" placeholder="プレイヤー名">
+                            <button class="btn btn-success" onclick="addPlayer('B')">追加</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="calculateResult()">結果を計算</button>
+        </div>
+
+        <div id="resultPanel" class="hidden">
+            <div class="result-panel">
+                <div class="result-title">🏆 試合結果</div>
+                
+                <div class="score-comparison">
+                    <div class="team-score">
+                        <div class="team-score-label team-a-label" id="resultTeamALabel">チームA</div>
+                        <div class="team-score-value" id="resultTeamAScore">0</div>
+                        <div style="color: #666; margin-top: 5px;">
+                            <span id="resultTeamAPins">0</span>ピン
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; font-size: 2em; color: #ccc;">VS</div>
+                    <div class="team-score">
+                        <div class="team-score-label team-b-label" id="resultTeamBLabel">チームB</div>
+                        <div class="team-score-value" id="resultTeamBScore">0</div>
+                        <div style="color: #666; margin-top: 5px;">
+                            <span id="resultTeamBPins">0</span>ピン
+                        </div>
+                    </div>
+                </div>
+
+                <div id="winnerText" class="winner-announcement"></div>
+                <div class="point-difference" id="pointDiff"></div>
+
+                <button class="btn btn-danger reset-btn" onclick="resetGame()">新しいゲーム</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let gameData = {
+            pointPerPin: 100,
+            teamAName: 'チームA',
+            teamBName: 'チームB',
+            teamA: [],
+            teamB: []
+        };
+
+        function startGame() {
+            gameData.pointPerPin = parseInt(document.getElementById('pointPerPin').value);
+            gameData.teamAName = document.getElementById('teamAName').value || 'チームA';
+            gameData.teamBName = document.getElementById('teamBName').value || 'チームB';
+
+            document.getElementById('displayTeamA').textContent = gameData.teamAName;
+            document.getElementById('displayTeamB').textContent = gameData.teamBName;
+
+            // 初期プレイヤーを追加
+            if (gameData.teamA.length === 0) {
+                gameData.teamA.push({ name: 'プレイヤー1', pins: 0 });
+            }
+            if (gameData.teamB.length === 0) {
+                gameData.teamB.push({ name: 'プレイヤー1', pins: 0 });
+            }
+
+            document.getElementById('settingsPanel').classList.add('hidden');
+            document.getElementById('gamePanel').classList.remove('hidden');
+            document.getElementById('resultPanel').classList.add('hidden');
+
+            renderPlayers();
+        }
+
+        function addPlayer(team) {
+            const inputId = team === 'A' ? 'newPlayerA' : 'newPlayerB';
+            const input = document.getElementById(inputId);
+            const name = input.value.trim();
+
+            if (name) {
+                const players = team === 'A' ? gameData.teamA : gameData.teamB;
+                players.push({ name: name, pins: 0 });
+                input.value = '';
+                renderPlayers();
+            }
+        }
+
+        function renderPlayers() {
+            renderTeamPlayers('A');
+            renderTeamPlayers('B');
+        }
+
+        function renderTeamPlayers(team) {
+            const players = team === 'A' ? gameData.teamA : gameData.teamB;
+            const container = document.getElementById(`team${team}Players`);
+            
+            container.innerHTML = players.map((player, index) => `
+                <div class="player">
+                    <input type="text" 
+                           class="player-name-input"
+                           value="${player.name}" 
+                           onchange="updatePlayerName('${team}', ${index}, this.value)"
+                           placeholder="プレイヤー名">
+                    <div class="player-input">
+                        <input type="number" 
+                               value="${player.pins}" 
+                               min="0" 
+                               max="300"
+                               onchange="updatePins('${team}', ${index}, this.value)"
+                               placeholder="ピン数">
+                    </div>
+                </div>
+            `).join('');
+
+            updateTotal(team);
+        }
+
+        function updatePins(team, index, value) {
+            const pins = parseInt(value) || 0;
+            if (team === 'A') {
+                gameData.teamA[index].pins = pins;
+            } else {
+                gameData.teamB[index].pins = pins;
+            }
+            updateTotal(team);
+        }
+
+        function updatePlayerName(team, index, name) {
+            const playerName = name.trim() || 'プレイヤー';
+            if (team === 'A') {
+                gameData.teamA[index].name = playerName;
+            } else {
+                gameData.teamB[index].name = playerName;
+            }
+        }
+
+        function updateTotal(team) {
+            const players = team === 'A' ? gameData.teamA : gameData.teamB;
+            const total = players.reduce((sum, player) => sum + player.pins, 0);
+            document.getElementById(`team${team}Total`).textContent = total;
+        }
+
+        function calculateResult() {
+            const teamATotal = gameData.teamA.reduce((sum, p) => sum + p.pins, 0);
+            const teamBTotal = gameData.teamB.reduce((sum, p) => sum + p.pins, 0);
+            const pointPerPin = gameData.pointPerPin;
+
+            const teamAPoints = teamATotal * pointPerPin;
+            const teamBPoints = teamBTotal * pointPerPin;
+            const difference = Math.abs(teamAPoints - teamBPoints);
+
+            document.getElementById('resultTeamALabel').textContent = gameData.teamAName;
+            document.getElementById('resultTeamBLabel').textContent = gameData.teamBName;
+            document.getElementById('resultTeamAScore').textContent = teamAPoints.toLocaleString();
+            document.getElementById('resultTeamBScore').textContent = teamBPoints.toLocaleString();
+            document.getElementById('resultTeamAPins').textContent = teamATotal;
+            document.getElementById('resultTeamBPins').textContent = teamBTotal;
+
+            const winnerText = document.getElementById('winnerText');
+            const pointDiff = document.getElementById('pointDiff');
+
+            if (teamAPoints > teamBPoints) {
+                winnerText.textContent = `🏆 ${gameData.teamAName} の勝利！`;
+                winnerText.className = 'winner-announcement winner-team-a';
+                pointDiff.textContent = `${difference.toLocaleString()}ポイント差`;
+            } else if (teamBPoints > teamAPoints) {
+                winnerText.textContent = `🏆 ${gameData.teamBName} の勝利！`;
+                winnerText.className = 'winner-announcement winner-team-b';
+                pointDiff.textContent = `${difference.toLocaleString()}ポイント差`;
+            } else {
+                winnerText.textContent = '🤝 引き分け！';
+                winnerText.className = 'winner-announcement winner-tie';
+                pointDiff.textContent = '同点です';
+            }
+
+            document.getElementById('gamePanel').classList.add('hidden');
+            document.getElementById('resultPanel').classList.remove('hidden');
+        }
+
+        function resetGame() {
+            gameData = {
+                pointPerPin: 100,
+                teamAName: 'チームA',
+                teamBName: 'チームB',
+                teamA: [],
+                teamB: []
+            };
+
+            document.getElementById('settingsPanel').classList.remove('hidden');
+            document.getElementById('gamePanel').classList.add('hidden');
+            document.getElementById('resultPanel').classList.add('hidden');
+        }
+
+        // エンターキーでプレイヤー追加
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('newPlayerA').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addPlayer('A');
+            });
+            document.getElementById('newPlayerB').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addPlayer('B');
+            });
+
+            // サービスワーカー登録
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').catch(function(error) {
+                    console.log('Service Worker registration failed:', error);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
