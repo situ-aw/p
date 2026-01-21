@@ -2,7 +2,7 @@
   "name": "賭けボーリング",
   "short_name": "ボーリング",
   "description": "チーム対戦のボーリング賭けゲームアプリ",
-  "start_url": "./bowling-bet.html",
+  "start_url": "/Bori/",
   "display": "standalone",
   "background_color": "#667eea",
   "theme_color": "#667eea",
